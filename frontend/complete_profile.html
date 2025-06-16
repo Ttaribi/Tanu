@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Complete Your Profile</title>
+  <style>
+    body {font-family:Arial,sans-serif;background:#f4f4f4;margin:0;padding:0;
+          display:flex;justify-content:center;align-items:center;height:100vh;}
+    .container {background:#fff;padding:2rem;border-radius:6px;
+               box-shadow:0 2px 8px rgba(0,0,0,0.1);width:100%;max-width:400px;}
+    h1 {margin-top:0;font-size:1.5rem;}
+    label {display:block;margin-top:1rem;font-weight:bold;}
+    input[type="email"] {width:100%;padding:.5rem;margin-top:.5rem;
+                         border:1px solid #ccc;border-radius:4px;}
+    button {margin-top:1.5rem;padding:.75rem 1.5rem;
+            background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Almost done!</h1>
+    <p>You signed in as <strong>{{ email }}</strong>.</p>
+    <form action="{{ url_for('routes.complete_profile') }}" method="POST">
+  <label for="alt_email">Alternate Email:</label>
+  <input type="email" id="alt_email" name="alt_email" />
+  <button type="submit">Save Profile</button>
+  <a href="{{ url_for('routes.skip_profile') }}" style="margin-left:1em;">Skip for now</a>
+</form>
+
+  </div>
+</body>
+</html>
