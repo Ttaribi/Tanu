@@ -7,7 +7,9 @@ from functools import wraps
 
 routes = Blueprint("routes", __name__)
 
-
+@routes.route('/')
+def home():
+    return redirect(url_for('routes.login'))
 
 #1) Entry point: Kicks off the OAuth flow
 @routes.route("/login", methods=["GET"])
@@ -53,8 +55,9 @@ def auth_callback():
     #Enforce UMD email
     if not user.email.endswith("@terpmail.umd.edu"):
         supabase.auth.sign_out()
-        return "UMD email required", 403
-
+        # Lets you attempt again to use terpmail
+        return redirect(url_for("routes.login"))
+    
     # We store our user info from our supabase session in our flask sessino
     session["supabase_user"] = {"id": user.id, "email": user.email}
     session["supabase_access_token"] = access_token
