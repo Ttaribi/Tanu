@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Basic*/
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* The top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: #111;
+      color: #fff;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      border-bottom: 1px solid #333;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      margin-right: 1rem;
+    }
+    .search-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+    }
+    .search-input input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #333;
+      border-radius: 25px;
+      background: #222;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .search-input input:focus {
+      border-color: #dc3545;
+    }
+    .search-input input::placeholder {
+      color: #888;
+    }
+    
+    /* Hamburger menu */
+    .hamburger {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .hamburger:hover {
+      background: #333;
+    }
+    .hamburger-icon {
+      width: 20px;
+      height: 2px;
+      background: #fff;
+      margin: 4px 0;
+      transition: 0.3s;
+    }
+    
+    /* Dropdown menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 1rem;
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 8px;
+      min-width: 150px;
+      display: none;
+      z-index: 100;
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+    .dropdown-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .dropdown-item:hover {
+      background: #333;
+    }
+
+    /* Filter tags */
+    .filter-tags {
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .filter-tag {
+      padding: 0.5rem 1rem;
+      background: #333;
+      border: 1px solid #555;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+    .filter-tag:hover {
+      background: #555;
+      border-color: #777;
+    }
+    .filter-tag.active {
+      background: #dc3545;
+      border-color: #dc3545;
+    }
+
+    /* grid of services */
+    .services {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .service-card {
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .service-card:hover {
+      background: #222;
+      border-color: #dc3545;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+    .service-card.hidden {
+      display: none;
+    }
+
+    /*footer spacing */
+    .footer-spacer {
+      height: 2rem;
+    }
+
+    /*empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #888;
+      display: none;
+    }
+    .empty-state.show {
+      display: block;
+    }
+    .empty-state h3 {
+      margin-bottom: 1rem;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">Tanu</div>
+    <div class="search-container">
+      <div class="search-input">
+        <input type="text" placeholder="Search businesses…" id="searchInput" />
+      </div>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div class="hamburger-icon"></div>
+      <div class="hamburger-icon"></div>
+      <div class="hamburger-icon"></div>
+    </div>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="dropdown-item" onclick="goToProfile()">Profile</div>
+      <div class="dropdown-item" onclick="goToSettings()">Settings</div>
+      <div class="dropdown-item" onclick="logout()">Logout</div>
+    </div>
+  </div>
+
+  <div class="filter-tags">
+    <div class="filter-tag active" data-category="all">All</div>
+    <div class="filter-tag" data-category="barbers">Barbers</div>
+    <div class="filter-tag" data-category="hairstylists">Hairstylists</div>
+    <div class="filter-tag" data-category="nail-techs">Nail Techs</div>
+    <div class="filter-tag" data-category="lash-techs">Lash Techs</div>
+    <div class="filter-tag" data-category="makeup-artists">Makeup Artists</div>
+  </div>
+
+  <div class="services">
+    <div class="service-card" data-category="barbers">Barbers</div>
+    <div class="service-card" data-category="hairstylists">Hairstylists</div>
+    <div class="service-card" data-category="nail-techs">Nail Techs</div>
+    <div class="service-card" data-category="lash-techs">Lash Techs</div>
+    <div class="service-card" data-category="makeup-artists">Makeup Artists</div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <h3>No businesses found</h3>
+    <p>Try selecting a different category or search for something else.</p>
+  </div>
+
+  <div class="footer-spacer"></div>
+
+  <script>
+    //Filter functionality
+    const filterTags = document.querySelectorAll('.filter-tag');
+    const serviceCards = document.querySelectorAll('.service-card');
+    const emptyState = document.getElementById('emptyState');
+    
+    function checkEmptyState() {
+      const visibleCards = document.querySelectorAll('.service-card:not(.hidden)');
+      const activeTag = document.querySelector('.filter-tag.active');
+      if (visibleCards.length === 0) {
+        if (activeTag) {
+          const tagText = activeTag.textContent.trim();
+          if (activeTag.getAttribute('data-category') === 'all') {
+            emptyState.querySelector('h3').textContent = 'No businesses found';
+          } else {
+            emptyState.querySelector('h3').textContent = `No ${tagText}`;
+          }
+        }
+        emptyState.classList.add('show');
+      } else {
+        emptyState.classList.remove('show');
+      }
+    }
+    
+    filterTags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        // Remove active class from all tags
+        filterTags.forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tag
+        tag.classList.add('active');
+        
+        const category = tag.getAttribute('data-category');
+        
+        // Show/hide service cards based on category
+        serviceCards.forEach(card => {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+        
+        // Check if we need to show empty state
+        checkEmptyState();
+      });
+    });
+
+    // search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      serviceCards.forEach(card => {
+        const cardText = card.textContent.toLowerCase();
+        if (cardText.includes(searchTerm)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      
+      // Check if we need to show empty state
+      checkEmptyState();
+    });
+
+    // Hamburger menu functionality
+    function toggleMenu() {
+      const dropdown = document.getElementById('dropdownMenu');
+      dropdown.classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('dropdownMenu');
+      const hamburger = document.querySelector('.hamburger');
+      
+      if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    // Menu item functions
+    function goToProfile() {
+      // Add your profile navigation logic later
+      console.log('Navigate to profile');
+    }
+
+    function goToSettings() {
+      // Add your settings navigation logic here
+      console.log('Navigate to settings');
+    }
+
+    function logout() {
+      // Add login logic later
+      console.log('Logout');
+    }
+  </script>
+
+</body>
+</html>

@@ -3,6 +3,7 @@ from flask import Blueprint, redirect, request, render_template, session, url_fo
 from supabase_client import supabase, SUPABASE_URL, SUPABASE_KEY
 from postgrest.exceptions import APIError
 from functools import wraps
+from . import auth_bp
 
 
 auth_bp = Blueprint("auth_bp", __name__)
@@ -77,7 +78,7 @@ def auth_callback():
     # We check whether a profile already exists and redirect from there
     exists = supabase.table("authTablePrac").select("*").eq("auth_id", user.id).execute().data
     if exists:
-        return redirect(url_for("auth_bp.profile"))
+        return redirect(url_for("dashboard.dashboard"))
     return redirect(url_for("auth_bp.complete_profile"))
 
     
@@ -136,7 +137,7 @@ def complete_profile():
     except APIError as e:
         return jsonify({"error": str(e)}), 500
 
-    return redirect(url_for("auth_bp.profile"))
+    return redirect(url_for("dashboard.dashboard"))
 
 
 # To skip alt email

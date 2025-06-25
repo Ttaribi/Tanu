@@ -1,34 +1,33 @@
-# ┌─────────────────────────────────────────────────────────────────────┐
-# │ Dockerfile                                                        │
-# └─────────────────────────────────────────────────────────────────────┘
-
-# 1) Base off a small Python image
+# Dockerfile
 FROM python:3.11-slim
 
-# 2) Prevent writing .pyc files, and make stdout/stderr unbuffered
+# 1) Prevent writing .pyc files and enable unbuffered logging
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# 3) Set working directory
+# 2) Set your working directory
 WORKDIR /app
 
-# 4) Copy & install only requirements first (caches nicely)
+# 3) Install Python deps
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5) Copy your backend code (app.py, routes.py, supabase_client.py, etc.)
-COPY backend/ ./
+# 4) Copy your backend code
+COPY backend/app.py              ./app.py
+COPY backend/supabase_client.py  ./supabase_client.py
+COPY backend/auth/               ./auth/
+COPY backend/dashboard/          ./dashboard/
 
-# 6) Copy the frontend folder into Flask’s default templates directory
-#    (app.py uses template_folder="templates")
-COPY frontend/ templates/
+# 5) Copy your front-end templates
+#    Since your Flask app does `template_folder="../frontend"`,
+#    we need to put the frontend folder *beside* /app in the container
+COPY frontend/                   /frontend/
 
-# 7) If we using a .env locally for dev creds, copy it too
-#    (for production, you’d rather pass these in via -e flags to `docker run`)
-COPY .env ./
+# 6) Copy your .env (optional—can also be passed at runtime)
+COPY .env                        ./
 
-# 8) Exposes the port our Flask app actually binds to
+# 7) Expose the port your app listens on
 EXPOSE 5001
 
-# 9) Launches Flask app as we do locally
+# 8) Launch your Flask app exactly as you do locally
 CMD ["python3", "app.py"]
