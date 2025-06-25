@@ -5,17 +5,17 @@ from postgrest.exceptions import APIError
 from functools import wraps
 
 
-routes = Blueprint("routes", __name__)
+auth_bp = Blueprint("auth_bp", __name__)
 
-@routes.route('/')
+@auth_bp.route('/')
 def home():
-    return redirect(url_for('routes.login'))
+    return redirect(url_for('auth_bp.login'))
 
 #1) Entry point: Kicks off the OAuth flow
-@routes.route("/login", methods=["GET"])
+@auth_bp.route("/login", methods=["GET"])
 def login():
     # is what we will redirect to after user logs in
-    callback = url_for("routes.auth_callback", _external=True)
+    callback = url_for("auth_bp.auth_callback", _external=True)
     # Build the params dict whichs holds info for supabase to handle login
     params = {
         "provider": "google",
@@ -32,7 +32,7 @@ def login():
 
 
 # 2) OAUTH CALLBACK: Handle Supabase + Google’s response
-@routes.route("/auth/callback")
+@auth_bp.route("/auth/callback")
 def auth_callback():
     #Google returns to us a code which indicates whther login is successful or not
     #If no code, it wasnt successful and no login occured
@@ -56,7 +56,7 @@ def auth_callback():
     if not user.email.endswith("@terpmail.umd.edu"):
         supabase.auth.sign_out()
         # Lets you attempt again to use terpmail
-        return redirect(url_for("routes.login"))
+        return redirect(url_for("auth_bp.login"))
     
     # We store our user info from our supabase session in our flask sessino
     session["supabase_user"] = {"id": user.id, "email": user.email}
@@ -77,28 +77,28 @@ def auth_callback():
     # We check whether a profile already exists and redirect from there
     exists = supabase.table("authTablePrac").select("*").eq("auth_id", user.id).execute().data
     if exists:
-        return redirect(url_for("routes.profile"))
-    return redirect(url_for("routes.complete_profile"))
+        return redirect(url_for("auth_bp.profile"))
+    return redirect(url_for("auth_bp.complete_profile"))
 
     
 
 '''
-Purpose: Protect certain routes so that only logged in users can access them.
+Purpose: Protect certain auth_bp so that only logged in users can access them.
 It checks if we stored "supabase_user" in Flask’s session
 If not, it redirects to the /login route. Otherwise it lets the original function run.
 '''
-# Protect all “logged in only” routes
+# Protect all “logged in only” auth_bp
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if "supabase_user" not in session:
-            return redirect(url_for("routes.login"))
+            return redirect(url_for("auth_bp.login"))
         return f(*args, **kwargs)
     return decorated
 
 
 # Completes the Prfile: show form (GET) & save alt_email (POST)
-@routes.route("/complete_profile", methods=["GET","POST"])
+@auth_bp.route("/complete_profile", methods=["GET","POST"])
 @login_required
 def complete_profile():
     # Gets user info form session
@@ -136,11 +136,11 @@ def complete_profile():
     except APIError as e:
         return jsonify({"error": str(e)}), 500
 
-    return redirect(url_for("routes.profile"))
+    return redirect(url_for("auth_bp.profile"))
 
 
 # To skip alt email
-@routes.route("/skip_profile")
+@auth_bp.route("/skip_profile")
 @login_required
 def skip_profile():
     ui = session["supabase_user"]
@@ -158,11 +158,11 @@ def skip_profile():
     except APIError as e:
         return jsonify({"error": str(e)}), 500
 
-    return redirect(url_for("routes.profile"))
+    return redirect(url_for("auth_bp.profile"))
 
 
 # 4) PROFILE: show the user’s saved profile
-@routes.route("/profile", methods=["GET"])
+@auth_bp.route("/profile", methods=["GET"])
 @login_required
 def profile():
     ui = session["supabase_user"]
