@@ -186,3 +186,12 @@ def profile():
         "profile": resp.data
     }), 200
 
+@auth_bp.route('/logout')
+def logout():
+    try:
+        supabase.auth.sign_out()
+    except Exception:
+        pass
+    
+    session.clear()
+    return redirect(url_for("auth_bp.home"))

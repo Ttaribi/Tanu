@@ -20,11 +20,11 @@
   <div class="container">
     <h1>Almost done!</h1>
     <p>You signed in as <strong>{{ email }}</strong>.</p>
-    <form action="{{ url_for('auth.complete_profile') }}" method="POST">
+    <form action="{{ url_for('auth_bp.complete_profile') }}" method="POST">
   <label for="alt_email">Alternate Email:</label>
   <input type="email" id="alt_email" name="alt_email" />
   <button type="submit">Save Profile</button>
-  <a href="{{ url_for('auth.skip_profile') }}" style="margin-left:1em;">Skip for now</a>
+  <a href="{{ url_for('auth_bp.skip_profile') }}" style="margin-left:1em;">Skip for now</a>
 </form>
 
   </div>

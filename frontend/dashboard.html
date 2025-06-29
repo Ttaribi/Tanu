@@ -322,18 +322,18 @@
 
     // Menu item functions
     function goToProfile() {
-      // Add your profile navigation logic later
+      
       console.log('Navigate to profile');
     }
 
     function goToSettings() {
-      // Add your settings navigation logic here
+      
       console.log('Navigate to settings');
     }
 
     function logout() {
-      // Add login logic later
-      console.log('Logout');
+      // This tell the browser to go to this path one its clicked. We're changing the path
+      window.location.href = " {{ url_for('auth_bp.logout') }}"
     }
   </script>
 
