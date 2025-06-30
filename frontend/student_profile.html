@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Tanu</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { text-decoration: none; color: inherit; }
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #111;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            border-bottom: 1px solid #333;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem 3rem 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .profile-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(220, 53, 69, 0.08);
+            padding: 2rem 2rem 1.5rem 2rem;
+            width: 100%;
+            max-width: 450px;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #dc3545;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            transition: border-color 0.3s;
+        }
+        .info-label {
+            font-weight: 500;
+            color: #ccc;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+        .info-value {
+            color: #fff;
+            font-weight: 400;
+            flex: 1;
+            text-align: right;
+        }
+        .info-value.readonly {
+            color: #888;
+            font-style: italic;
+        }
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: #222;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            margin-left: 1rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+        .edit-form {
+            display: none;
+            margin-top: 1rem;
+        }
+        .edit-form.active {
+            display: block;
+        }
+        .form-group label {
+            color: #ccc;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #dc3545;
+            outline: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .btn-secondary {
+            background: #222;
+            color: #fff;
+            border: 1px solid #333;
+        }
+        .btn-secondary:hover {
+            background: #333;
+            color: #fff;
+        }
+        .success-message {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid #28a74544;
+            color: #28a745;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc354544;
+            color: #dc3545;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem 0.2rem 2rem 0.2rem;
+            }
+            .profile-card {
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="logo">Tanu</div>
+        <div></div>
+    </div>
+    <div class="container">
+        <div class="profile-card">
+            <div class="section-title">Profile</div>
+            <div class="info-group">
+                <div class="info-item">
+                    <div class="info-label">First Name:</div>
+                    <div class="info-value readonly" id="firstName">{{ user.get('first_name', '') }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Last Name:</div>
+                    <div class="info-value readonly" id="lastName">{{ user.get('last_name', '') }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Google Email:</div>
+                    <div class="info-value readonly" id="googleEmail">{{ user.get('email', '') }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Alt Email:</div>
+                    <div class="info-value" id="altEmail">{{ user.get('alt_email', '') }}</div>
+                    <button class="btn" onclick="toggleEditAltEmail()">Edit</button>
+                </div>
+            </div>
+            <div class="edit-form" id="editAltEmailForm">
+                <div class="form-group">
+                    <label for="newAltEmail">Alternative Email:</label>
+                    <input type="email" id="newAltEmail" placeholder="Enter your alternative email" value="{{ user.get('alt_email', '') }}">
+                </div>
+                <div class="button-group">
+                    <button class="btn" onclick="saveAltEmail()">Save</button>
+                    <button class="btn btn-secondary" onclick="cancelEditAltEmail()">Cancel</button>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Account Type:</div>
+                <div class="info-value" id="accountType">{{ user.get('account_type', 'Student') }}</div>
+            </div>
+            <div class="success-message" id="successMessage">✓ Profile updated successfully!</div>
+            <div class="error-message" id="errorMessage">✗ An error occurred. Please try again.</div>
+        </div>
+    </div>
+    <script>
+        // Gets user data from Flask backend but will ad later
+        let userData = {
+            firstName: "{{ user.get('first_name', '') }}",
+            lastName: "{{ user.get('last_name', '') }}",
+            googleEmail: "{{ user.get('email', '') }}",
+            altEmail: "{{ user.get('alt_email', '') }}",
+            accountType: "{{ user.get('account_type', 'Student') }}"
+        };
+        function initializeProfile() {
+            document.getElementById('firstName').textContent = userData.firstName || 'Not set';
+            document.getElementById('lastName').textContent = userData.lastName || 'Not set';
+            document.getElementById('googleEmail').textContent = userData.googleEmail || 'Not set';
+            document.getElementById('altEmail').textContent = userData.altEmail || 'Not set';
+            document.getElementById('accountType').textContent = userData.accountType || 'Student';
+        }
+        function toggleEditAltEmail() {
+            const form = document.getElementById('editAltEmailForm');
+            const newEmailInput = document.getElementById('newAltEmail');
+            form.classList.add('active');
+            newEmailInput.value = userData.altEmail || '';
+            newEmailInput.focus();
+        }
+        function cancelEditAltEmail() {
+            const form = document.getElementById('editAltEmailForm');
+            form.classList.remove('active');
+            hideMessages();
+        }
+        async function saveAltEmail() {
+            const newEmail = document.getElementById('newAltEmail').value.trim();
+            if (!newEmail) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+            if (!isValidEmail(newEmail)) {
+                showError('Please enter a valid email format.');
+                return;
+            }
+            try {
+                const response = await fetch('/student_profile/update-alt-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ alt_email: newEmail }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    userData.altEmail = newEmail;
+                    document.getElementById('altEmail').textContent = newEmail;
+                    document.getElementById('editAltEmailForm').classList.remove('active');
+                    showSuccess(data.message);
+                } else {
+                    showError(data.message || 'Failed to update email');
+                }
+            } catch (error) {
+                console.error('Error updating email:', error);
+                showError('An error occurred while updating the email');
+            }
+        }
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        function showSuccess(message) {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+        function hideMessages() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        document.addEventListener('DOMContentLoaded', initializeProfile);
+    </script>
+</body>
+</html>

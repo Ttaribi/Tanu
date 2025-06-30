@@ -163,28 +163,28 @@ def skip_profile():
 
 
 # 4) PROFILE: show the user’s saved profile
-@auth_bp.route("/profile", methods=["GET"])
-@login_required
-def profile():
-    ui = session["supabase_user"]
+# @auth_bp.route("/profile", methods=["GET"])
+# @login_required
+# def profile():
+#     ui = session["supabase_user"]
 
-    try:
-        resp = (supabase
-            .table("authTablePrac")
-            .select("*")
-            .eq("auth_id", ui["id"])
-            .single()
-            .execute()
-        )
-        # Resp holds a response object returned from supabase after a query.
-    except APIError as e:
-        return jsonify({"error": str(e)}), 500
+#     try:
+#         resp = (supabase
+#             .table("authTablePrac")
+#             .select("*")
+#             .eq("auth_id", ui["id"])
+#             .single()
+#             .execute()
+#         )
+#         # Resp holds a response object returned from supabase after a query.
+#     except APIError as e:
+#         return jsonify({"error": str(e)}), 500
 
     
-    return jsonify({
-        "user":    ui,
-        "profile": resp.data
-    }), 200
+#     return jsonify({
+#         "user":    ui,
+#         "profile": resp.data
+#     }), 200
 
 @auth_bp.route('/logout')
 def logout():
