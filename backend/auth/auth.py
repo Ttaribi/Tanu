@@ -109,8 +109,11 @@ def complete_profile():
     if request.method == "GET":
         return render_template("complete_profile.html", email=ui["email"])
 
-    #Means we need to finish the profile creation
+    #Finish profile creation
     alt = request.form.get("alt_email", "").strip() or None
+    first_name = request.form.get("first_name", "").strip() or None
+    last_name = request.form.get("last_name", "").strip() or None
+
     # Resp holds a response from supabase which hold the data, error code, and more
     try:
         resp = (supabase
@@ -118,7 +121,10 @@ def complete_profile():
             .upsert({
                 "auth_id":      ui["id"],
                 "google_email": ui["email"],
-                "alt_email":    alt
+                "alt_email":    alt,
+                "first_name":   first_name,
+                "last_name":    last_name
+
             }, on_conflict=["auth_id"])
             .execute()
         )
@@ -129,7 +135,9 @@ def complete_profile():
             {
             "auth_id": "12345",
             "google_email": "student@umd.edu",
-            "alt_email": "alt@gmail.com"
+            "alt_email": "alt@gmail.com",
+            "first_name": "Ta",
+            "last_name": "nu"
             }
 
         
