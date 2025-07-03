@@ -29,5 +29,5 @@ COPY .env                        ./
 # 7) Exposes the port your app listens on
 EXPOSE 5001
 
-# 8) Launch the Flask app exactly as you do locally
+# 8) Launch the Flask app 
 CMD ["python3", "app.py"]

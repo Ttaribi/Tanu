@@ -76,7 +76,7 @@ def auth_callback():
     '''
 
     # We check whether a profile already exists and redirect from there
-    exists = supabase.table("authTablePrac").select("*").eq("auth_id", user.id).execute().data
+    exists = supabase.table("UserAccounts").select("*").eq("auth_id", user.id).execute().data
     if exists:
         return redirect(url_for("dashboard.dashboard"))
     return redirect(url_for("auth_bp.complete_profile"))
@@ -114,7 +114,7 @@ def complete_profile():
     # Resp holds a response from supabase which hold the data, error code, and more
     try:
         resp = (supabase
-            .table("authTablePrac")
+            .table("UserAccounts")
             .upsert({
                 "auth_id":      ui["id"],
                 "google_email": ui["email"],
@@ -148,7 +148,7 @@ def skip_profile():
 
     try:
         resp = (supabase
-            .table("authTablePrac")
+            .table("UserAccounts")
             .upsert({
                 "auth_id":      ui["id"],
                 "google_email": ui["email"],
@@ -170,7 +170,7 @@ def skip_profile():
 
 #     try:
 #         resp = (supabase
-#             .table("authTablePrac")
+#             .table("UserAccounts")
 #             .select("*")
 #             .eq("auth_id", ui["id"])
 #             .single()
