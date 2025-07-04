@@ -193,30 +193,30 @@
             <div class="info-group">
                 <div class="info-item">
                     <div class="info-label">First Name:</div>
-                    <div class="info-value readonly" id="firstName">{{ user.get('first_name', '') }}</div>
+                    <div class="info-value readonly" id="first_name">{{ user.get('first_name', '') }}</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Last Name:</div>
-                    <div class="info-value readonly" id="lastName">{{ user.get('last_name', '') }}</div>
+                    <div class="info-value readonly" id="last_name">{{ user.get('last_name', '') }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Google Email:</div>
-                    <div class="info-value readonly" id="googleEmail">{{ user.get('email', '') }}</div>
+                    <div class="info-label">Email:</div>
+                    <div class="info-value readonly" id="email">{{ user.get('email', '') }}</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Alt Email:</div>
-                    <div class="info-value" id="altEmail">{{ user.get('alt_email', '') }}</div>
-                    <button class="btn" onclick="toggleEditAltEmail()">Edit</button>
+                    <div class="info-value" id="alt_email">{{ user.get('alt_email', '') }}</div>
+                    <button class="btn" onclick="toggleEditalt_email()">Edit</button>
                 </div>
             </div>
-            <div class="edit-form" id="editAltEmailForm">
+            <div class="edit-form" id="editalt_emailForm">
                 <div class="form-group">
-                    <label for="newAltEmail">Alternative Email:</label>
-                    <input type="email" id="newAltEmail" placeholder="Enter your alternative email" value="{{ user.get('alt_email', '') }}">
+                    <label for="newalt_email">Alternative Email:</label>
+                    <input type="email" id="newalt_email" placeholder="Enter your alternative email" value="{{ user.get('alt_email', '') }}">
                 </div>
                 <div class="button-group">
-                    <button class="btn" onclick="saveAltEmail()">Save</button>
-                    <button class="btn btn-secondary" onclick="cancelEditAltEmail()">Cancel</button>
+                    <button class="btn" onclick="savealt_email()">Save</button>
+                    <button class="btn btn-secondary" onclick="cancelEditalt_email()">Cancel</button>
                 </div>
             </div>
             <div class="info-item">
@@ -229,34 +229,36 @@
     </div>
     <script>
         // Gets user data from Flask backend but will ad later
-        let userData = {
-            firstName: "{{ user.get('first_name', '') }}",
-            lastName: "{{ user.get('last_name', '') }}",
-            googleEmail: "{{ user.get('email', '') }}",
-            altEmail: "{{ user.get('alt_email', '') }}",
+        let user_data = {
+            first_name: "{{ user.get('first_name', 'frog') }}",
+            last_name: "{{ user.get('last_name', '') }}",
+            email: "{{ user.get('google_email', '') }}",
+            alt_email: "{{ user.get('alt_email', '') }}",
             accountType: "{{ user.get('account_type', 'Student') }}"
         };
+        console.log("Script is running")
+        console.log(user_data)
         function initializeProfile() {
-            document.getElementById('firstName').textContent = userData.firstName || 'Not set';
-            document.getElementById('lastName').textContent = userData.lastName || 'Not set';
-            document.getElementById('googleEmail').textContent = userData.googleEmail || 'Not set';
-            document.getElementById('altEmail').textContent = userData.altEmail || 'Not set';
-            document.getElementById('accountType').textContent = userData.accountType || 'Student';
+            document.getElementById("first_name").textContent = user_data.first_name || 'Not '
+            document.getElementById('last_name').textContent = user_data.last_name || 'Not set';
+            document.getElementById('email').textContent = user_data.email || 'Not set';
+            document.getElementById('alt_email').textContent = user_data.alt_email || 'Not set';
+            document.getElementById('accountType').textContent = user_data.accountType || 'Student';
         }
-        function toggleEditAltEmail() {
-            const form = document.getElementById('editAltEmailForm');
-            const newEmailInput = document.getElementById('newAltEmail');
+        function toggleEditalt_email() {
+            const form = document.getElementById('editalt_emailForm');
+            const newEmailInput = document.getElementById('newalt_email');
             form.classList.add('active');
-            newEmailInput.value = userData.altEmail || '';
+            newEmailInput.value = user_data.alt_email || '';
             newEmailInput.focus();
-        }
-        function cancelEditAltEmail() {
-            const form = document.getElementById('editAltEmailForm');
+        } 
+        function cancelEditalt_email() {
+            const form = document.getElementById('editalt_emailForm');
             form.classList.remove('active');
             hideMessages();
         }
-        async function saveAltEmail() {
-            const newEmail = document.getElementById('newAltEmail').value.trim();
+        async function savealt_email() {
+            const newEmail = document.getElementById('newalt_email').value.trim();
             if (!newEmail) {
                 showError('Please enter a valid email address.');
                 return;
@@ -276,9 +278,9 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    userData.altEmail = newEmail;
-                    document.getElementById('altEmail').textContent = newEmail;
-                    document.getElementById('editAltEmailForm').classList.remove('active');
+                    user_data.alt_email = newEmail;
+                    document.getElementById('alt_email').textContent = newEmail;
+                    document.getElementById('editalt_emailForm').classList.remove('active');
                     showSuccess(data.message);
                 } else {
                     showError(data.message || 'Failed to update email');

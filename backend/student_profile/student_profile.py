@@ -1,4 +1,5 @@
-from flask import render_template, session, request, jsonify
+from flask import redirect, url_for, render_template, session, request, jsonify
+from supabase_client import supabase
 from backend.auth.auth import login_required
 from . import student_profile_bp
 
@@ -6,9 +7,31 @@ from . import student_profile_bp
 @student_profile_bp.route('/')
 @login_required
 def student_profile():
-  
-    user = session.get('user', {})
-    return render_template('student_profile.html', user=user)
+    # Get user session info
+    ui = session.get("supabase_user")
+    if not ui:
+        return redirect(url_for("auth_bp.login"))
+
+    # Fetch the latest full profile from Supabase
+    try:
+        profile = (
+            supabase
+            .table("UserAccounts")
+            .select("*")
+            .eq("auth_id", ui["id"])
+            .single()
+            .execute()
+            .data
+        )
+
+        # Save updated profile to session
+        session["supabase_user"] = profile
+
+        # Pass it to the HTML
+        return render_template("student_profile.html", user=profile)
+
+    except Exception as e:
+        return f"Error fetching profile: {e}", 500
 
 @student_profile_bp.route('/update-alt-email', methods=['POST'])
 @login_required

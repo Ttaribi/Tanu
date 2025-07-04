@@ -30,8 +30,6 @@ def login():
 
 
 
-
-
 # 2) OAUTH CALLBACK: Handle Supabase + Google’s response
 @auth_bp.route("/auth/callback")
 def auth_callback():
@@ -39,7 +37,7 @@ def auth_callback():
     #If no code, it wasnt successful and no login occured
     code = request.args.get("code")
     if not code:
-        return "No authorization code provided", 400
+         return "No authorization code provided", 400
 
     # We use our code to exchange for a supabase sessino
     try:
@@ -56,11 +54,12 @@ def auth_callback():
     #Enforce UMD email
     if not user.email.endswith("@terpmail.umd.edu"):
         supabase.auth.sign_out()
+
         # Lets you attempt again to use terpmail
         return redirect(url_for("auth_bp.login"))
     
     # We store our user info from our supabase session in our flask sessino
-    session["supabase_user"] = {"id": user.id, "email": user.email}
+    session["supabase_user"] = {"id": user.id, "email": user.email, }
     session["supabase_access_token"] = access_token
 
     '''
@@ -129,6 +128,7 @@ def complete_profile():
             .execute()
         )
 
+
         '''
         in Memory
 
@@ -139,7 +139,7 @@ def complete_profile():
             "first_name": "Ta",
             "last_name": "nu"
             }
-
+ 
         
         '''
     except APIError as e:
