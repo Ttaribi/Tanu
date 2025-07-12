@@ -7,6 +7,7 @@ from . import student_profile_bp
 @student_profile_bp.route('/')
 @login_required
 def student_profile():
+    
     # Get user session info
     ui = session.get("supabase_user")
     if not ui:
@@ -39,9 +40,15 @@ def update_alt_email():
     try:
         data = request.get_json()
         new_alt_email = data.get('alt_email', '').strip()
+
+        ui = session.get("supabase_user")
+
+        supabase.table("UserAccounts").select('*').eq("auth_id", ui["id"]).upsert({"alt_email": new_alt_email}, on_conflict=["auth_id"]).execute()
         
         if not new_alt_email:
             return jsonify({'success': False, 'message': 'Email cannot be empty'}), 400
+        
+
         
       
         if 'user' in session:

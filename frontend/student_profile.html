@@ -236,7 +236,7 @@
             alt_email: "{{ user.get('alt_email', '') }}",
             accountType: "{{ user.get('account_type', 'Student') }}"
         };
-        console.log("Script is running")
+
         console.log(user_data)
         function initializeProfile() {
             document.getElementById("first_name").textContent = user_data.first_name || 'Not '
@@ -282,6 +282,8 @@
                     document.getElementById('alt_email').textContent = newEmail;
                     document.getElementById('editalt_emailForm').classList.remove('active');
                     showSuccess(data.message);
+
+                    // Add logic for updating in db
                 } else {
                     showError(data.message || 'Failed to update email');
                 }
