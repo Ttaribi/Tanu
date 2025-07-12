@@ -48,8 +48,6 @@ def update_alt_email():
         if not new_alt_email:
             return jsonify({'success': False, 'message': 'Email cannot be empty'}), 400
         
-
-        
       
         if 'user' in session:
             session['user']['alt_email'] = new_alt_email
