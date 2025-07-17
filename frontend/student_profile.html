@@ -32,6 +32,55 @@
             font-weight: bold;
             color: white;
         }
+        .hamburger {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .hamburger:hover {
+            background: #333;
+        }
+        .hamburger-icon {
+            width: 20px;
+            height: 2px;
+            background: #fff;
+            margin: 4px 0;
+            transition: 0.3s;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 2rem;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            min-width: 150px;
+            display: none;
+            z-index: 100;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .dropdown-item:hover {
+            background: #333;
+        }
+        .dropdown-item a {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .dropdown-item a:hover {
+            background: #222;
+        }
         .container {
             flex: 1;
             display: flex;
@@ -179,15 +228,44 @@
             .profile-card {
                 padding: 1.2rem 0.5rem 1rem 0.5rem;
             }
+            .hamburger {
+                display: flex;
+            }
+            .dropdown-menu {
+                display: block;
+            }
         }
     </style>
 </head>
 <body>
     <div class="topbar">
         <div class="logo">Tanu</div>
-        <div></div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div class="dropdown-item">
+                <a href="{{ url_for('student_profile_bp.student_profile') }}">Profile</a>
+            </div>
+            <div class="dropdown-item">
+                <a href="/settings">Settings</a>
+            </div>
+            {% if user.google_email == "ttaribi@terpmail.umd.edu" %}
+            <div class="dropdown-item">
+                <a href="{{ url_for('tanuAdmin_bp.admin_portal') }}">Admin Portal</a>
+            </div>
+            {% endif %}
+            <div class="dropdown-item">
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
     </div>
     <div class="container">
+        <div style="text-align:right; margin: 1.5rem 0;">
+          <a href="/student_profile/create-business-account" style="background:#2d2d44; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.07);">Create Business Account</a>
+        </div>
         <div class="profile-card">
             <div class="section-title">Profile</div>
             <div class="info-group">
@@ -201,7 +279,7 @@
                 </div>
                 <div class="info-item">
                     <div class="info-label">Email:</div>
-                    <div class="info-value readonly" id="email">{{ user.get('email', '') }}</div>
+                    <div class="info-value readonly" id="email">{{ user.get('google_email', '') }}</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Alt Email:</div>
@@ -228,13 +306,12 @@
         </div>
     </div>
     <script>
-        // Gets user data from Flask backend but will ad later
+     
         let user_data = {
             first_name: "{{ user.get('first_name', 'frog') }}",
             last_name: "{{ user.get('last_name', '') }}",
             email: "{{ user.get('google_email', '') }}",
             alt_email: "{{ user.get('alt_email', '') }}",
-            accountType: "{{ user.get('account_type', 'Student') }}"
         };
 
         console.log(user_data)
@@ -243,7 +320,7 @@
             document.getElementById('last_name').textContent = user_data.last_name || 'Not set';
             document.getElementById('email').textContent = user_data.email || 'Not set';
             document.getElementById('alt_email').textContent = user_data.alt_email || 'Not set';
-            document.getElementById('accountType').textContent = user_data.accountType || 'Student';
+        
         }
         function toggleEditalt_email() {
             const form = document.getElementById('editalt_emailForm');
@@ -283,7 +360,7 @@
                     document.getElementById('editalt_emailForm').classList.remove('active');
                     showSuccess(data.message);
 
-                    // Add logic for updating in db
+                    
                 } else {
                     showError(data.message || 'Failed to update email');
                 }
@@ -315,6 +392,10 @@
         function hideMessages() {
             document.getElementById('successMessage').style.display = 'none';
             document.getElementById('errorMessage').style.display = 'none';
+        }
+        function toggleMenu() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
         }
         document.addEventListener('DOMContentLoaded', initializeProfile);
     </script>

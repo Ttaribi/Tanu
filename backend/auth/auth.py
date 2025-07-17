@@ -1,6 +1,6 @@
 import requests
 from flask import Blueprint, redirect, request, render_template, session, url_for, jsonify
-from supabase_client import supabase, SUPABASE_URL, SUPABASE_KEY
+from supabase_client import supabase
 from postgrest.exceptions import APIError
 from functools import wraps
 from . import auth_bp
@@ -12,13 +12,14 @@ auth_bp = Blueprint("auth_bp", __name__)
 def home():
     return redirect(url_for('auth_bp.login'))
 
-#1) Entry point: Kicks off the OAuth flow
+# Gets us the Google sign in url which we load up in the user's current page
 @auth_bp.route("/login", methods=["GET"])
 def login():
     # is what we will redirect to after user logs in
     callback = url_for("auth_bp.auth_callback", _external=True)
     # Build the params dict whichs holds info for supabase to handle login
     params = {
+
         "provider": "google",
         "options": {"redirect_to": callback}
     }
@@ -30,7 +31,7 @@ def login():
 
 
 
-# 2) OAUTH CALLBACK: Handle Supabase + Google’s response
+# OAUTH CALLBACK: Handle Supabase + Google’s response
 @auth_bp.route("/auth/callback")
 def auth_callback():
     #Google returns to us a code which indicates whther login is successful or not
@@ -59,7 +60,7 @@ def auth_callback():
         return redirect(url_for("auth_bp.login"))
     
     # We store our user info from our supabase session in our flask sessino
-    session["supabase_user"] = {"id": user.id, "email": user.email, }
+    session["supabase_user"] = {"auth_id": user.id, "google_email": user.email, }
     session["supabase_access_token"] = access_token
 
     '''
@@ -77,7 +78,7 @@ def auth_callback():
     # We check whether a profile already exists and redirect from there
     exists = supabase.table("UserAccounts").select("*").eq("auth_id", user.id).execute().data
     if exists:
-        return redirect(url_for("dashboard.dashboard"))
+        return redirect(url_for("dashboard_bp.dashboard"))
     return redirect(url_for("auth_bp.complete_profile"))
 
     
@@ -87,7 +88,7 @@ Purpose: Protect certain auth_bp so that only logged in users can access them.
 It checks if we stored "supabase_user" in Flask’s session
 If not, it redirects to the /login route. Otherwise it lets the original function run.
 '''
-# Protect all “logged in only” auth_bp
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -101,14 +102,14 @@ def login_required(f):
 @auth_bp.route("/complete_profile", methods=["GET","POST"])
 @login_required
 def complete_profile():
-    # Gets user info form session
+    
     ui = session["supabase_user"]
 
     #If the request is get, indicates we need retrieve the prfoile
     if request.method == "GET":
         return render_template("complete_profile.html", email=ui["email"])
 
-    #Finish profile creation
+
     alt = request.form.get("alt_email", "").strip() or None
     first_name = request.form.get("first_name", "").strip() or None
     last_name = request.form.get("last_name", "").strip() or None
@@ -118,8 +119,8 @@ def complete_profile():
         resp = (supabase
             .table("UserAccounts")
             .upsert({
-                "auth_id":      ui["id"],
-                "google_email": ui["email"],
+                "auth_id":      ui["auth_id"],
+                "google_email": ui["google_email"],
                 "alt_email":    alt,
                 "first_name":   first_name,
                 "last_name":    last_name
@@ -145,10 +146,10 @@ def complete_profile():
     except APIError as e:
         return jsonify({"error": str(e)}), 500
 
-    return redirect(url_for("dashboard.dashboard"))
+    return redirect(url_for("dashboard_bp.dashboard"))
 
 
-# To skip alt email
+
 @auth_bp.route("/skip_profile")
 @login_required
 def skip_profile():
@@ -158,8 +159,8 @@ def skip_profile():
         resp = (supabase
             .table("UserAccounts")
             .upsert({
-                "auth_id":      ui["id"],
-                "google_email": ui["email"],
+                "auth_id":      ui["auth_id"],
+                "google_email": ui["google_email"],
                 "alt_email":    None
             }, on_conflict=["auth_id"])
             .execute()
@@ -169,30 +170,6 @@ def skip_profile():
 
     return redirect(url_for("auth_bp.profile"))
 
-
-# 4) PROFILE: show the user’s saved profile
-# @auth_bp.route("/profile", methods=["GET"])
-# @login_required
-# def profile():
-#     ui = session["supabase_user"]
-
-#     try:
-#         resp = (supabase
-#             .table("UserAccounts")
-#             .select("*")
-#             .eq("auth_id", ui["id"])
-#             .single()
-#             .execute()
-#         )
-#         # Resp holds a response object returned from supabase after a query.
-#     except APIError as e:
-#         return jsonify({"error": str(e)}), 500
-
-    
-#     return jsonify({
-#         "user":    ui,
-#         "profile": resp.data
-#     }), 200
 
 @auth_bp.route('/logout')
 def logout():

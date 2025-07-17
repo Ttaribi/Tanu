@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #000;
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a { text-decoration: none; color: inherit; }
+      .topbar {
+        position: sticky;
+        top: 0;
+        background: #111;
+        color: #fff;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 10;
+        border-bottom: 1px solid #333;
+      }
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        margin-right: 1rem;
+      }
+      .center-title {
+        flex: 1;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #fff;
+      }
+      .hamburger {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+      .hamburger:hover {
+        background: #333;
+      }
+      .hamburger-icon {
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        margin: 4px 0;
+        transition: 0.3s;
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 1rem;
+        background: #222;
+        border: 1px solid #333;
+        border-radius: 8px;
+        min-width: 150px;
+        display: none;
+        z-index: 100;
+      }
+      .dropdown-menu.show {
+        display: block;
+      }
+      .dropdown-item {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .dropdown-item:hover {
+        background: #333;
+      }
+      .container {
+        max-width: 900px;
+        margin: 2rem auto;
+        background: #111;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(220,53,69,0.07);
+        padding: 2rem;
+      }
+      h1 { margin-top: 0; color: #fff; }
+      table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; background: #111; color: #fff; }
+      th, td { padding: 0.75rem 1rem; border-bottom: 1px solid #333; text-align: left; }
+      th { background: #222; color: #fff; }
+      tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo">Tanu</div>
+    <div class="center-title">Admin Portal</div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div class="hamburger-icon"></div>
+      <div class="hamburger-icon"></div>
+      <div class="hamburger-icon"></div>
+    </div>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="dropdown-item">
+        <a href="/dashboard">Dashboard</a>
+      </div>
+      <div class="dropdown-item">
+        <a href="{{ url_for('student_profile_bp.student_profile') }}">Profile</a>
+      </div>
+      <div class="dropdown-item">
+        <a href="/settings">Settings</a>
+      </div>
+      <div class="dropdown-item">
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <h1>Business Account Requests</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Business Name</th>
+          <th>Business Type</th>
+          <th>Description</th>
+          <th>User ID</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+        <tr>
+          <td>{{ req.business_name }}</td>
+          <td>{{ req.business_type }}</td>
+          <td>{{ req.description }}</td>
+          <td>{{ req.user_id }}</td>
+          <td>{{ req.created_at }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center; color:#888;">No requests found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <script>
+
+    
+    function toggleMenu() {
+      const dropdown = document.getElementById('dropdownMenu');
+      dropdown.classList.toggle('show');
+    }
+    /
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('dropdownMenu');
+      const hamburger = document.querySelector('.hamburger');
+      if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html> 

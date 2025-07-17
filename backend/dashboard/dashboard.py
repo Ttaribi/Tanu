@@ -11,4 +11,4 @@ def dashboard():
 @dashboard_bp.route("/settings")
 @login_required
 def settings():
-    return render_template("settings.html")
+    return 

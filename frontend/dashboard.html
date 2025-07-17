@@ -197,23 +197,36 @@
 <body>
 
   <div class="topbar">
-    <div class="logo">Tanu</div>
-    <div class="search-container">
-      <div class="search-input">
-        <input type="text" placeholder="Search businesses…" id="searchInput" />
-      </div>
-    </div>
-    <div class="hamburger" onclick="toggleMenu()">
-      <div class="hamburger-icon"></div>
-      <div class="hamburger-icon"></div>
-      <div class="hamburger-icon"></div>
-    </div>
-    <div class="dropdown-menu" id="dropdownMenu">
-      <div class="dropdown-item" onclick="goToProfile()">Profile</div>
-      <div class="dropdown-item" onclick="goToSettings()">Settings</div>
-      <div class="dropdown-item" onclick="logout()">Logout</div>
+  <div class="logo">Tanu</div>
+  <div class="search-container">
+    <div class="search-input">
+      <input type="text" placeholder="Search businesses…" id="searchInput" />
     </div>
   </div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <div class="hamburger-icon"></div>
+    <div class="hamburger-icon"></div>
+    <div class="hamburger-icon"></div>
+  </div>
+
+  <div class="dropdown-menu" id="dropdownMenu">
+    <a href="{{ url_for('student_profile_bp.student_profile') }}" class="dropdown-item">
+      Profile
+    </a>
+    <a href="{{ url_for('dashboard_bp.settings') }}" class="dropdown-item">
+      Settings
+    </a>
+    {% if user.google_email == "ttaribi@terpmail.umd.edu" %}
+    <a href="{{ url_for('tanuAdmin_bp.admin_portal') }}" class="dropdown-item">
+      Admin Portal
+    </a>
+    {% endif %}
+    <a href="{{ url_for('auth_bp.logout') }}" class="dropdown-item">
+      Logout
+    </a>
+  </div>
+</div>
+
 
   <div class="filter-tags">
     <div class="filter-tag active" data-category="all">All</div>
@@ -265,9 +278,9 @@
     
     filterTags.forEach(tag => {
       tag.addEventListener('click', () => {
-        // Removes active class from all tags
+        
         filterTags.forEach(t => t.classList.remove('active'));
-        // Adds active class to clicked tag
+        
         tag.classList.add('active');
         
         const category = tag.getAttribute('data-category');
@@ -281,7 +294,7 @@
           }
         });
         
-        // Check if we need to show empty state
+       
         checkEmptyState();
       });
     });
@@ -300,7 +313,6 @@
         }
       });
       
-      // Check if we need to show empty state
       checkEmptyState();
     });
 
@@ -320,23 +332,6 @@
       }
     });
 
-    // Menu item functions
-    function goToProfile() {
-      
-      console.log('Navigate to profile');
-      window.location.href = "{{ url_for('student_profile_bp.student_profile') }}"
-
-    }
-
-    function goToSettings() {
-      
-      console.log('Navigate to settings');
-    }
-
-    function logout() {
-      // This tell the browser to go to this path one its clicked. We're changing the path
-      window.location.href = " {{ url_for('auth_bp.logout') }}"
-    }
   </script>
 
 </body>
