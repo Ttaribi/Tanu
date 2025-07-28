@@ -21,8 +21,10 @@ def admin_account_required(f):
 @admin_account_required
 def admin_portal():
     try:
-        resp = supabase.table("BusinessAccountRequests").select("*").execute()
-        requests = resp.data if resp.data else []
+        response = supabase.table("BusinessAccountRequests").select("*").execute()
+        data = response.data if response.data else []
+      
     except Exception as e:
-        requests = []
-    return render_template("admin_portal.html", requests=requests)
+        data = []
+    return render_template("admin_portal.html", requests=data)
+
