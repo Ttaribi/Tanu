@@ -57,9 +57,5 @@ The repo currently hosts:
 
 ## Creators
 
-- **Tamunoopubo Taribi** — CS @ UMD, full-stack & product design enthusiast  
-- **Joshua Berhanu** — CS @ UMD, backend & data aficionado  
-
----
-
-MIT — free to fork, tinker, and launch your own campus edition!
+- **Tamunoopubo Taribi** — CS @ UMD
+- **Joshua Berhanu** — CS @ UMD
