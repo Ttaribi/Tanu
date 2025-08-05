@@ -1,14 +1,14 @@
 from flask import redirect, url_for, render_template, session, request, jsonify
 from supabase_client import supabase
 from backend.auth.auth import login_required
-from . import student_profile_bp
+from . import user_settings_bp
 
 # Function Summary: This functinos retrieves info from supabase so we can load up the page
 #                   with the current user's info
-@student_profile_bp.route("", methods=["GET"])
-@student_profile_bp.route("/", methods=["GET"])
+@user_settings_bp.route("", methods=["GET"])
+@user_settings_bp.route("/", methods=["GET"])
 @login_required
-def student_profile():
+def user_settings():
     ui = session["supabase_user"]
 
     
@@ -28,12 +28,12 @@ def student_profile():
           .data
     )
     session["supabase_user"] = profile
-    return render_template("student_profile.html", user=profile)
+    return render_template("user_settings.html", user=profile)
 
 
 # Function Summary: This function helps update the user's alt email by checking if it is valid
 #                   then upserts new email into supabase
-@student_profile_bp.route('/update-alt-email', methods=['POST'])
+@user_settings_bp.route('/update-alt-email', methods=['POST'])
 @login_required
 def update_alt_email():
     data = request.get_json() or {}
@@ -72,7 +72,7 @@ def update_alt_email():
 
 #Function Description: This functino handles retrieving info from the current user
 
-@student_profile_bp.route('/create-business-account', methods=['GET'])
+@user_settings_bp.route('/create-business-account', methods=['GET'])
 @login_required
 def create_business_account_form():
     ui = session.get("supabase_user")
@@ -80,7 +80,7 @@ def create_business_account_form():
 
 #Function Description: This function takes info from the javascript so we can
 #                      add it to our supabase db
-@student_profile_bp.route('/create-business-account', methods=['POST'])
+@user_settings_bp.route('/create-business-account', methods=['POST'])
 @login_required
 def create_business_account_submit():
     allowed_types = [

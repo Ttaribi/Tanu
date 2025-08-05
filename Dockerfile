@@ -17,7 +17,8 @@ COPY backend/app.py              ./app.py
 COPY backend/supabase_client.py  ./supabase_client.py
 COPY backend/auth/               ./auth/
 COPY backend/dashboard/          ./dashboard/
-COPY backend/student_profile/            ./student_profile/
+COPY backend/user_settings/            ./user_settings/
+COPY backend/user_profile/            ./user_profile/
 
 # 5) This copies the front-end templates
 

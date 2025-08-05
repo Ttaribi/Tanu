@@ -105,10 +105,10 @@
     </div>
     <div class="dropdown-menu" id="dropdownMenu">
       <div class="dropdown-item">
-        <a href="{{ url_for('student_profile_bp.student_profile') }}">Profile</a>
+        <a href="">Profile</a>
       </div>
       <div class="dropdown-item">
-        <a href="/settings">Settings</a>
+        <a href="{{ url_for('user_settings_bp.user_settings') }}">Settings</a>
       </div>
       {% if user.google_email == "ttaribi@terpmail.umd.edu" %}
       <div class="dropdown-item">

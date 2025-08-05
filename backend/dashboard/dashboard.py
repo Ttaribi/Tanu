@@ -8,7 +8,4 @@ def dashboard():
     user = session["supabase_user"]
     return render_template("dashboard.html", user=user)
 
-@dashboard_bp.route("/settings")
-@login_required
-def settings():
-    return 
+

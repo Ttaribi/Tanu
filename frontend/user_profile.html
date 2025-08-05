@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile | Tanu</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { text-decoration: none; color: inherit; }
+        
+       
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #111;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            border-bottom: 1px solid #333;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .hamburger {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .hamburger:hover {
+            background: #333;
+        }
+        .hamburger-icon {
+            width: 20px;
+            height: 2px;
+            background: #fff;
+            margin: 4px 0;
+            transition: 0.3s;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 2rem;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            min-width: 150px;
+            display: none;
+            z-index: 100;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .dropdown-item:hover {
+            background: #333;
+        }
+        .dropdown-item a {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        
+        /* this the main Container */
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+
+        .profile-header {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: #dc3545;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+        .profile-info h1 {
+            margin: 0 0 0.5rem 0;
+            color: #fff;
+            font-size: 1.8rem;
+        }
+        .profile-info p {
+            margin: 0;
+            color: #888;
+            font-size: 1rem;
+        }
+        
+      
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1rem;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .tab:hover {
+            background: #333;
+            border-color: #555;
+        }
+        .tab.active {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        
+      
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        
+ 
+        .card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: #dc3545;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+        }
+        
+      
+        .appointment-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .appointment-info {
+            flex: 1;
+        }
+        .appointment-business {
+            font-weight: bold;
+            color: #dc3545;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .appointment-service {
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        .appointment-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .appointment-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .status-upcoming {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+        .status-completed {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+        .status-cancelled {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+        
+      
+        .business-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .business-avatar {
+            width: 60px;
+            height: 60px;
+            background: #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #dc3545;
+        }
+        .business-info {
+            flex: 1;
+        }
+        .business-name {
+            font-weight: bold;
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .business-category {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .favorite-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .favorite-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+        
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #888;
+        }
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+        .empty-state p {
+            color: #666;
+        }
+        
+     
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .tabs {
+                flex-wrap: wrap;
+            }
+            .appointment-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .business-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="logo">Tanu</div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div class="dropdown-item">
+                <a href="{{ url_for('user_profile_bp.user_profile') }}">Profile</a>
+            </div>
+            <div class="dropdown-item">
+                <a href="{{ url_for('user_settings_bp.user_settings') }}">Settings</a>
+            </div>
+            {% if user.google_email == "ttaribi@terpmail.umd.edu" %}
+            <div class="dropdown-item">
+                <a href="{{ url_for('tanuAdmin_bp.admin_portal') }}">Admin Portal</a>
+            </div>
+            {% endif %}
+            <div class="dropdown-item">
+                <a href="{{ url_for('auth_bp.logout') }}">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ user.get('first_name', 'U')[0] }}{{ user.get('last_name', '')[0] if user.get('last_name') else '' }}
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.get('first_name', '') }} {{ user.get('last_name', '') }}</h1>
+                <p>{{ user.get('google_email', '') }}</p>
+            </div>
+        </div>
+
+
+        <div class="tabs">
+            <div class="tab active" data-tab="upcoming">Upcoming Appointments</div>
+            <div class="tab" data-tab="past">Past Appointments</div>
+            <div class="tab" data-tab="favorites">Favorited Businesses</div>
+        </div>
+
+        <!-- Some Test Input -->
+
+        <div class="content-section active" id="upcoming">
+            <div class="card">
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <div class="appointment-business">Style Studio</div>
+                        <div class="appointment-service">Haircut & Styling</div>
+                        <div class="appointment-date">December 15, 2024 at 2:00 PM</div>
+                    </div>
+                    <div class="appointment-status status-upcoming">Upcoming</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <div class="appointment-business">Nail Art Pro</div>
+                        <div class="appointment-service">Manicure & Pedicure</div>
+                        <div class="appointment-date">December 20, 2024 at 11:00 AM</div>
+                    </div>
+                    <div class="appointment-status status-upcoming">Upcoming</div>
+                </div>
+            </div>
+            <div class="empty-state" id="upcoming-empty" style="display: none;">
+                <h3>No Upcoming Appointments</h3>
+                <p>You don't have any upcoming appointments. Book a service to get started!</p>
+            </div>
+        </div>
+
+    
+        <div class="content-section" id="past">
+            <div class="card">
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <div class="appointment-business">Beauty Bar</div>
+                        <div class="appointment-service">Facial Treatment</div>
+                        <div class="appointment-date">November 28, 2024 at 3:00 PM</div>
+                    </div>
+                    <div class="appointment-status status-completed">Completed</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <div class="appointment-business">Hair Masters</div>
+                        <div class="appointment-service">Hair Coloring</div>
+                        <div class="appointment-date">November 15, 2024 at 1:00 PM</div>
+                    </div>
+                    <div class="appointment-status status-completed">Completed</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <div class="appointment-business">Lash Studio</div>
+                        <div class="appointment-service">Lash Extensions</div>
+                        <div class="appointment-date">November 10, 2024 at 10:00 AM</div>
+                    </div>
+                    <div class="appointment-status status-cancelled">Cancelled</div>
+                </div>
+            </div>
+            <div class="empty-state" id="past-empty" style="display: none;">
+                <h3>No Past Appointments</h3>
+                <p>Your appointment history will appear here once you've completed services.</p>
+            </div>
+        </div>
+
+    
+        <div class="content-section" id="favorites">
+            <div class="card">
+                <div class="business-card">
+                    <div class="business-avatar">SS</div>
+                    <div class="business-info">
+                        <div class="business-name">Style Studio</div>
+                        <div class="business-category">Hair Salon</div>
+                    </div>
+                    <button class="favorite-btn" onclick="toggleFavorite(this)">❤️</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="business-card">
+                    <div class="business-avatar">BB</div>
+                    <div class="business-info">
+                        <div class="business-name">Beauty Bar</div>
+                        <div class="business-category">Spa & Wellness</div>
+                    </div>
+                    <button class="favorite-btn" onclick="toggleFavorite(this)">❤️</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="business-card">
+                    <div class="business-avatar">NA</div>
+                    <div class="business-info">
+                        <div class="business-name">Nail Art Pro</div>
+                        <div class="business-category">Nail Salon</div>
+                    </div>
+                    <button class="favorite-btn" onclick="toggleFavorite(this)">❤️</button>
+                </div>
+            </div>
+            <div class="empty-state" id="favorites-empty" style="display: none;">
+                <h3>No Favorited Businesses</h3>
+                <p>Start favoriting businesses to see them here for quick access!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       
+        const tabs = document.querySelectorAll('.tab');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+               
+                tabs.forEach(t => t.classList.remove('active'));
+                contentSections.forEach(section => section.classList.remove('active'));
+
+           
+                tab.classList.add('active');
+
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+ 
+        function toggleMenu() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+  
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdownMenu');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        //The business Favorited logic
+        function toggleFavorite(button) {
+            if (button.textContent === '❤️') {
+                button.textContent = '🤍';
+                button.style.color = '#888';
+            } else {
+                button.textContent = '❤️';
+                button.style.color = '#dc3545';
+            }
+        }
+
+        // this check for empty states and show appropriate messages
+        function checkEmptyStates() {
+            const upcomingCards = document.querySelectorAll('#upcoming .card');
+            const pastCards = document.querySelectorAll('#past .card');
+            const favoriteCards = document.querySelectorAll('#favorites .card');
+
+            if (upcomingCards.length === 0) {
+                document.getElementById('upcoming-empty').style.display = 'block';
+            }
+            if (pastCards.length === 0) {
+                document.getElementById('past-empty').style.display = 'block';
+            }
+            if (favoriteCards.length === 0) {
+                document.getElementById('favorites-empty').style.display = 'block';
+            }
+        }
+
+        // initializes on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkEmptyStates();
+        });
+    </script>
+</body>
+</html>
