@@ -128,7 +128,7 @@
         {% if success %}
         <div class="msg success">{{ success }}</div>
         {% endif %}
-        <form method="POST" action="/profile/create-business-account" id="businessForm">
+        <form method="POST" action="{{ url_for('user_settings_bp.create_business_account_submit')}}" id="businessForm">
             <div class="form-group">
                 <label for="business_name">Business Name</label>
                 <input type="text" id="business_name" name="business_name" required />
@@ -152,12 +152,12 @@
         </form>
     </div>
     <script>
-  // Hamburger menu functionality
+
   function toggleMenu() {
     const dropdown = document.getElementById('dropdownMenu');
     dropdown.classList.toggle('show');
   }
-  // Close dropdown when clicking outside
+
   document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('dropdownMenu');
     const hamburger = document.querySelector('.hamburger');

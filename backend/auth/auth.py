@@ -52,7 +52,7 @@ def auth_callback():
     user = sess.user
     access_token = sess.access_token
 
-    #Enforce UMD email
+
     if not user.email.endswith("@terpmail.umd.edu"):
         supabase.auth.sign_out()
 

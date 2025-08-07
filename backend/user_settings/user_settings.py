@@ -99,12 +99,22 @@ def create_business_account_submit():
     if business_type not in allowed_types:
         return render_template('create_business_account.html', error='Invalid business type.', user=ui)
     try:
+        supabase_user = supabase.table("UserAccounts").select("*").eq("auth_id", ui["auth_id"]).single().execute()
+
+        if not supabase_user.data:
+            return render_template('create_business_account.html', error='User not found')
+
+        supabase_user_id = supabase_user.data['id']
+
         supabase.table('BusinessAccountRequests').insert({
             'business_name': business_name,
             'business_type': business_type,
             'description': description,
-            'user_id': ui['id']
+            'user_id': supabase_user_id
         }).execute()
+
         return render_template('create_business_account.html', success='Request submitted successfully!', user=ui)
+    
+
     except Exception as e:
         return render_template('create_business_account.html', error=f'Error: {e}', user=ui)
