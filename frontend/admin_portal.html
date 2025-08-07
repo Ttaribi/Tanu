@@ -95,6 +95,52 @@
       th, td { padding: 0.75rem 1rem; border-bottom: 1px solid #333; text-align: left; }
       th { background: #222; color: #fff; }
       tr:last-child td { border-bottom: none; }
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .btn-approve {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn-approve:hover {
+        background: #218838;
+      }
+      .btn-reject {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn-reject:hover {
+        background: #c82333;
+      }
+      .btn-approve:disabled,
+      .btn-reject:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     </style>
 </head>
 <body>
@@ -131,7 +177,9 @@
           <th>Business Type</th>
           <th>Description</th>
           <th>User ID</th>
+          <th>Status</th>
           <th>Created At</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -142,10 +190,19 @@
           <td>{{ req.business_type }}</td>
           <td>{{ req.description }}</td>
           <td>{{ req.user_id }}</td>
+          <td>{{ req.status or 'pending' }}</td>
           <td>{{ req.created_at }}</td>
+          <td class="action-buttons">
+            <form method="POST" action="{{ url_for('tanuAdmin_bp.approve_business_request', request_id=req.id) }}" style="display: inline;">
+              <button type="submit" class="btn-approve" title="Approve">✓</button>
+            </form>
+            <form method="POST" action="{{ url_for('tanuAdmin_bp.reject_business_request', request_id=req.id) }}" style="display: inline;">
+              <button type="submit" class="btn-reject" title="Reject">✗</button>
+            </form>
+          </td>
         </tr>
         {% else %}
-        <tr><td colspan="5" style="text-align:center; color:#888;">No requests found.</td></tr>
+        <tr><td colspan="7" style="text-align:center; color:#888;">No requests found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -165,6 +222,8 @@
         dropdown.classList.remove('show');
       }
     });
+
+
   </script>
 </body>
 </html> 

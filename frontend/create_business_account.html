@@ -76,7 +76,7 @@
       .dropdown-item:hover {
         background: #333;
       }
-      /* Existing styles for container, form, etc. */
+      /* Existing styles for container, form and other stuff */
       .container { max-width: 500px; margin: 2rem auto; background: #111; border-radius: 8px; box-shadow: 0 2px 8px rgba(220,53,69,0.07); padding: 2rem; }
       h1 { margin-top: 0; color: #fff; }
       .form-group { margin-bottom: 1.5rem; }
@@ -95,6 +95,7 @@
       a.back-link:hover { text-decoration: underline; }
     </style>
 </head>
+
 <body>
   <div class="topbar">
     <div class="logo">Tanu</div>
@@ -175,7 +176,7 @@
       hiddenType.value = e.target.getAttribute('data-type');
     }
   });
-  // Prevent submit if no type selected
+  
   document.getElementById('businessForm').onsubmit = function() {
     if (!hiddenType.value) {
       alert('Please select a business type.');
