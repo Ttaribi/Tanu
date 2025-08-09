@@ -107,7 +107,7 @@ def complete_profile():
 
     #If the request is get, indicates we need retrieve the prfoile
     if request.method == "GET":
-        return render_template("complete_profile.html", email=ui["email"])
+        return render_template("complete_profile.html", email=ui["google_email"])
 
 
     alt = request.form.get("alt_email", "").strip() or None
