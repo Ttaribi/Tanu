@@ -1,5 +1,5 @@
 from flask import redirect, url_for, render_template, session, request, jsonify
-from supabase_client import supabase
+from backend.clients import supabase
 from backend.auth.auth import login_required
 from . import user_settings_bp
 

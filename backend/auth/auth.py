@@ -1,6 +1,6 @@
 import requests
 from flask import Blueprint, redirect, request, render_template, session, url_for, jsonify
-from supabase_client import supabase
+from backend.clients import supabase
 from postgrest.exceptions import APIError
 from functools import wraps
 from . import auth_bp

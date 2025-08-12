@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <h2>Upload a Post</h2>
+
+  <!-- File input -->
+  <label for="file-input">Choose file:</label>
+  <input type="file" id="file-input" /><br><br>
+
+  <!-- Caption input -->
+  <label for="caption-input">Caption:</label>
+  <input type="text" id="caption-input" placeholder="Enter a caption..." /><br><br>
+
+  <button id="upload">Upload</button>
+
+  <script>
+    document.getElementById("upload").onclick = async () => {
+      const file = document.getElementById("file-input").files[0];
+      const caption = document.getElementById("caption-input").value;
+      const pathParts = window.location.pathname.split("/");
+      const username = pathParts[pathParts.indexOf("users") + 1];
+
+      if (!file) return alert("Pick a file first");
+
+      // Step 1: Get presigned S3 URL
+      const resp = await fetch("/storage/gen-presigned", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, content_type: file.type })
+      });
+
+      const { post_id, url, key} = await resp.json();
+
+      // Step 2: Upload file to S3
+      const s3resp = await fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file
+      });
+
+      if (!s3resp.ok) {
+        const body = await s3resp.text();
+        console.error("S3 Error Response:", body);
+        throw new Error(`Upload failed: ${s3resp.status}`);
+      }
+
+      const publicUrl = `https://banutucket.s3.amazonaws.com/${key}`;
+
+      // Step 3: Send metadata to Flask backend
+      const backendResp = await fetch(`/posts/upload`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: post_id, key: key, url: publicUrl, caption: caption })
+      });
+
+      if (!backendResp.ok) {
+        console.error("Failed to send metadata to backend", await backendResp.text());
+        return;
+      }
+
+      const result = await backendResp.json();
+      console.log("Backend response:", result);
+      alert("Post uploaded successfully!");
+    };
+  </script>
+
+</body>
+</html>

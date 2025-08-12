@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, url_for, redirect, render_template, request, session
-from supabase_client import supabase
+from backend.clients import supabase
 from postgrest.exceptions import APIError
 from functools import wraps
 from . import tanuAdmin_bp
