@@ -1,6 +1,6 @@
 from flask import redirect, url_for, render_template, session, request, jsonify
 from backend.clients import supabase
-from backend.auth.auth import login_required
+from backend.auth.auth_checks import login_required
 from . import user_settings_bp
 
 # Function Summary: This functinos retrieves info from supabase so we can load up the page

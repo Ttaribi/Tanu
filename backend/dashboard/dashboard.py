@@ -1,8 +1,8 @@
 from flask import render_template, session
-from auth import login_required   
+from auth.auth_checks import login_required   
 from . import dashboard_bp
 
-@dashboard_bp.route("/dashboard")
+@dashboard_bp.route("/")
 @login_required
 def dashboard():
     user = session["supabase_user"]

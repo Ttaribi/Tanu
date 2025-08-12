@@ -2,14 +2,13 @@ import requests
 from flask import Blueprint, redirect, request, render_template, session, url_for, jsonify
 from backend.clients import supabase
 from postgrest.exceptions import APIError
-from functools import wraps
 from . import auth_bp
+from dashboard import dashboard_bp
+from .auth_checks import login_required
 
 
-auth_bp = Blueprint("auth_bp", __name__)
-
-@auth_bp.route('/')
-def home():
+@auth_bp.route('/login-page')
+def login_page():
     return redirect(url_for('auth_bp.login'))
 
 # Gets us the Google sign in url which we load up in the user's current page
@@ -59,8 +58,9 @@ def auth_callback():
         # Lets you attempt again to use terpmail
         return redirect(url_for("auth_bp.login"))
     
+    
     # We store our user info from our supabase session in our flask sessino
-    session["supabase_user"] = {"auth_id": user.id, "google_email": user.email, }
+    session["supabase_user"] = {"auth_id": user.id, "google_email": user.email }
     session["supabase_access_token"] = access_token
 
     '''
@@ -82,21 +82,6 @@ def auth_callback():
     return redirect(url_for("auth_bp.complete_profile"))
 
     
-
-'''
-Purpose: Protect certain auth_bp so that only logged in users can access them.
-It checks if we stored "supabase_user" in Flask’s session
-If not, it redirects to the /login route. Otherwise it lets the original function run.
-'''
-
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "supabase_user" not in session:
-            return redirect(url_for("auth_bp.login"))
-        return f(*args, **kwargs)
-    return decorated
-
 
 # Completes the Prfile: show form (GET) & save alt_email (POST)
 @auth_bp.route("/complete_profile", methods=["GET","POST"])
@@ -179,4 +164,4 @@ def logout():
         pass
     
     session.clear()
-    return redirect(url_for("auth_bp.home"))
+    return redirect(url_for("dashboard_bp.dashboard"))
