@@ -7,7 +7,9 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app
+      # Used for dev, will be commented for prod
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
     environment:
       - FLASK_ENV=development
       - FLASK_APP=backend/app.py

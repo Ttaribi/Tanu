@@ -13,13 +13,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip \
 && pip install --no-cache-dir -r requirements.txt
 
-# 4) Coies the backend code
-
-COPY backend/ ./backend/
-
-# 5) This copies the front-end templates
-
-COPY frontend/                   ./frontend/
+# 4) Copying immutable folders into container
+# Not needed for dev, but good for prod
+#COPY backend/ ./backend/
+#COPY frontend/ ./frontend/
 
 # 7) Exposes the port your app listens on
 EXPOSE 5001
