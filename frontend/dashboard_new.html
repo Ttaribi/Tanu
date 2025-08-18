@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard | Tanu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Basic */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: #111;
+      color: #fff;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      border-bottom: 1px solid #333;
+    }
+    .logo { font-size: 1.5rem; font-weight: bold; color: white; margin-right: 1rem; }
+    .search-container { flex: 1; display: flex; justify-content: center; max-width: 500px; margin: 0 auto; }
+    .search-input { width: 100%; max-width: 500px; position: relative; }
+    .search-input input {
+      width: 100%; padding: 0.75rem 1rem; border: 2px solid #333; border-radius: 25px;
+      background: #222; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;
+    }
+    .search-input input:focus { border-color: #dc3545; }
+    .search-input input::placeholder { color: #888; }
+
+    /* Right cluster */
+    .topbar-actions { display: flex; align-items: center; gap: 0.5rem; position: relative; min-width: 160px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid #333; background: #1a1a1a; color: #fff; padding: 0.5rem 0.9rem;
+      border-radius: 10px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .btn:hover { border-color: #dc3545; box-shadow: 0 4px 10px rgba(220,53,69,0.25); transform: translateY(-1px); }
+    .btn-login { padding: 0.55rem 0.9rem; }
+
+    /* Hamburger */
+    .hamburger { cursor: pointer; padding: 0.5rem; border-radius: 4px; transition: background 0.3s; }
+    .hamburger:hover { background: #333; }
+    .hamburger-icon { width: 20px; height: 2px; background: #fff; margin: 4px 0; transition: 0.3s; }
+
+    /* Dropdown */
+    .dropdown-menu { position: absolute; top: 100%; right: 1rem; background: #222; border: 1px solid #333; border-radius: 8px; min-width: 180px; display: none; z-index: 100; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item { padding: 0.75rem 1rem; cursor: pointer; transition: background 0.3s; }
+    .dropdown-item:hover { background: #333; }
+
+    /* Filters / cards / empty */
+    .filter-tags { padding: 1rem 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+    .filter-tag { padding: 0.5rem 1rem; background: #333; border: 1px solid #555; border-radius: 20px; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+    .filter-tag:hover { background: #555; border-color: #777; }
+    .filter-tag.active { background: #dc3545; border-color: #dc3545; }
+
+    .services { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+    .service-card { background: #111; color: #fff; border: 1px solid #333; border-radius: 12px; padding: 1.5rem; text-align: center; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+    .service-card:hover { background: #222; border-color: #dc3545; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3); }
+    .service-card.hidden { display: none; }
+
+    .footer-spacer { height: 2rem; }
+    .empty-state { text-align: center; padding: 3rem 2rem; color: #888; display: none; }
+    .empty-state.show { display: block; }
+    .empty-state h3 { margin-bottom: 1rem; color: #ccc; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">Tanu</div>
+
+    <div class="search-container">
+      <div class="search-input">
+        <input type="text" placeholder="Search businesses…" id="searchInput" />
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      {% if session.get('supabase_user') %}
+        <!-- Logged in: show hamburger only -->
+        <div class="hamburger" id="hamburgerBtn" aria-label="User menu" title="Menu">
+          <div class="hamburger-icon"></div>
+          <div class="hamburger-icon"></div>
+          <div class="hamburger-icon"></div>
+        </div>
+      {% else %}
+        <!-- Not logged in: single login button to new login page -->
+        <button id="loginBtn" class="btn btn-login" title="Login">Login</button>
+      {% endif %}
+    </div>
+
+    {% if session.get('supabase_user') %}
+      <!-- Dropdown menu only for logged in users -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="dropdown-item"><a href="{{ url_for('user_profile_bp.user_profile') }}">Profile</a></div>
+        <div class="dropdown-item"><a href="{{ url_for('user_settings_bp.user_settings') }}">Settings</a></div>
+
+        {% if session.get('supabase_user') and session['supabase_user'].get('google_email') == "ttaribi@terpmail.umd.edu" %}
+        <div class="dropdown-item"><a href="{{ url_for('tanuAdmin_bp.admin_portal') }}">Admin Portal</a></div>
+        {% endif %}
+
+        <div class="dropdown-item"><a href="{{ url_for('auth_bp.logout') }}">Logout</a></div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="filter-tags">
+    <div class="filter-tag active" data-category="all">All</div>
+    <div class="filter-tag" data-category="barbers">Barbers</div>
+    <div class="filter-tag" data-category="hairstylists">Hairstylists</div>
+    <div class="filter-tag" data-category="nail-techs">Nail Techs</div>
+    <div class="filter-tag" data-category="lash-techs">Lash Techs</div>
+    <div class="filter-tag" data-category="makeup-artists">Makeup Artists</div>
+  </div>
+
+  <div class="services">
+    <div class="service-card" data-category="barbers">Barbers</div>
+    <div class="service-card" data-category="hairstylists">Hairstylists</div>
+    <div class="service-card" data-category="nail-techs">Nail Techs</div>
+    <div class="service-card" data-category="lash-techs">Lash Techs</div>
+    <div class="service-card" data-category="makeup-artists">Makeup Artists</div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <h3>No businesses found</h3>
+    <p>Try selecting a different category or search for something else.</p>
+  </div>
+
+  <div class="footer-spacer"></div>
+
+  <script>
+    /* ---- Filters ---- */
+    const filterTags = document.querySelectorAll('.filter-tag');
+    const serviceCards = document.querySelectorAll('.service-card');
+    const emptyState = document.getElementById('emptyState');
+
+    function checkEmptyState() {
+      const visible = document.querySelectorAll('.service-card:not(.hidden)');
+      const activeTag = document.querySelector('.filter-tag.active');
+      if (visible.length === 0) {
+        const tagText = activeTag ? activeTag.textContent.trim() : '';
+        emptyState.querySelector('h3').textContent =
+          !activeTag || activeTag.dataset.category === 'all' ? 'No businesses found' : `No ${tagText}`;
+        emptyState.classList.add('show');
+      } else emptyState.classList.remove('show');
+    }
+
+    filterTags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        filterTags.forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+        const category = tag.dataset.category;
+        serviceCards.forEach(card => {
+          card.classList.toggle('hidden', !(category === 'all' || card.dataset.category === category));
+        });
+        checkEmptyState();
+      });
+    });
+
+    /* ---- Search ---- */
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      serviceCards.forEach(card => {
+        card.classList.toggle('hidden', !card.textContent.toLowerCase().includes(q));
+      });
+      checkEmptyState();
+    });
+
+    /* ---- Menu / Login wiring ---- */
+    function toggleMenu() {
+      document.getElementById('dropdownMenu')?.classList.toggle('show');
+    }
+
+    // Only present when logged in
+    document.getElementById('hamburgerBtn')?.addEventListener('click', toggleMenu);
+
+    // Dismiss menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('dropdownMenu');
+      const hamburger = document.getElementById('hamburgerBtn');
+      if (!dropdown) return;
+      const clickedInsideMenu = dropdown.contains(e.target);
+      const clickedHamburger = hamburger && hamburger.contains(e.target);
+      if (!clickedInsideMenu && !clickedHamburger) dropdown.classList.remove('show');
+    });
+
+    // Only present when NOT logged in
+    document.getElementById('loginBtn')?.addEventListener('click', () => {
+      window.location.assign('/login-page'); // goes to your new login page
+    });
+  </script>
+
+</body>
+</html>
