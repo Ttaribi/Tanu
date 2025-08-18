@@ -1,4 +1,4 @@
-from flask import redirect, url_for, session
+from flask import redirect, url_for, session, render_template
 from functools import wraps
 
 '''
@@ -11,6 +11,6 @@ def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if "supabase_user" not in session:
-            return redirect(url_for("auth_bp.login_page"))
+            return render_template("login.html")
         return f(*args, **kwargs)
     return decorated

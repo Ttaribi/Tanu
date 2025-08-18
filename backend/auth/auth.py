@@ -7,13 +7,22 @@ from dashboard import dashboard_bp
 from .auth_checks import login_required
 
 
+@auth_bp.route("/register")
+def register():
+    return "No"
+
 @auth_bp.route('/login-page')
 def login_page():
-    return redirect(url_for('auth_bp.login'))
+    return render_template("login.html")
+
+@auth_bp.route("/login-password")
+def login_password():
+
+    return "No"
 
 # Gets us the Google sign in url which we load up in the user's current page
-@auth_bp.route("/login", methods=["GET"])
-def login():
+@auth_bp.route("/login/google", methods=["GET"])
+def login_google():
     # is what we will redirect to after user logs in
     callback = url_for("auth_bp.auth_callback", _external=True)
     # Build the params dict whichs holds info for supabase to handle login
@@ -55,12 +64,32 @@ def auth_callback():
     if not user.email.endswith("@terpmail.umd.edu"):
         supabase.auth.sign_out()
 
-        # Lets you attempt again to use terpmail
-        return redirect(url_for("auth_bp.login"))
+        # If invalid email, Back to login
+        return redirect(url_for("auth_bp.login_page"))
     
+    # We check whether a profile already exists and redirect from there
+    exists = supabase.table("UserAccounts").select("*").eq("auth_id", user.id).execute().data
+    if not exists:
+        return redirect(url_for("auth_bp.complete_profile"))
     
+    """
+    supabase.table("UserAccounts").upsert({
+        "auth_id":      user.id,
+        "google_email": user.email,
+    }, on_conflict=["auth_id"]).execute()
+    """
+   
+    profile = (
+        supabase
+          .table("UserAccounts")
+          .select("*")
+          .eq("auth_id", user.id)
+          .single()
+          .execute()
+          .data
+    )
     # We store our user info from our supabase session in our flask sessino
-    session["supabase_user"] = {"auth_id": user.id, "google_email": user.email }
+    session["supabase_user"] = profile
     session["supabase_access_token"] = access_token
 
     '''
@@ -75,11 +104,9 @@ def auth_callback():
 }
     '''
 
-    # We check whether a profile already exists and redirect from there
-    exists = supabase.table("UserAccounts").select("*").eq("auth_id", user.id).execute().data
-    if exists:
-        return redirect(url_for("dashboard_bp.dashboard"))
-    return redirect(url_for("auth_bp.complete_profile"))
+    # head to dashboard as normal
+    return redirect(url_for("dashboard_bp.dashboard"))
+    
 
     
 

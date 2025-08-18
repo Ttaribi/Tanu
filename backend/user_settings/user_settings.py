@@ -9,25 +9,7 @@ from . import user_settings_bp
 @user_settings_bp.route("/", methods=["GET"])
 @login_required
 def user_settings():
-    ui = session["supabase_user"]
-
-    
-    supabase.table("UserAccounts").upsert({
-        "auth_id":      ui["auth_id"],
-        "google_email": ui["google_email"],
-    }, on_conflict=["auth_id"]).execute()
-
-   
-    profile = (
-        supabase
-          .table("UserAccounts")
-          .select("*")
-          .eq("auth_id", ui["auth_id"])
-          .single()
-          .execute()
-          .data
-    )
-    session["supabase_user"] = profile
+    profile = session['supabase_user']
     return render_template("user_settings.html", user=profile)
 
 
