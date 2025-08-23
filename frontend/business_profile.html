@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Profile | Tanu</title>
+  <style>
+    :root {
+      --bg: #000;
+      --panel: #111;
+      --muted: #888;
+      --line: #333;
+      --brand: #dc3545;
+      --success: #28a745;
+      --warn: #ffc107;
+      --elev: rgba(220,53,69,.2);
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: #111; color:#fff; border-bottom:1px solid var(--line);
+      padding: 1rem 2rem; display:flex; align-items:center; justify-content:space-between;
+    }
+    .logo { font-size: 1.5rem; font-weight: 800; letter-spacing:.3px; }
+    .hamburger { position:absolute; right:2rem; top:50%; transform:translateY(-50%); cursor:pointer; padding:.5rem; border-radius:4px; transition:background .3s; }
+    .hamburger:hover { background:#333; }
+    .hamburger-icon { width:20px; height:2px; background:#fff; margin:4px 0; transition:.3s; }
+    .dropdown-menu { position:absolute; top:100%; right:2rem; background:#222; border:1px solid var(--line); border-radius:8px; min-width:180px; display:none; z-index:100; overflow:hidden; }
+    .dropdown-menu.show { display:block; }
+    .dropdown-item { padding:.8rem 1rem; cursor:pointer; transition:background .3s; border-bottom:1px solid rgba(255,255,255,.03) }
+    .dropdown-item:last-child { border-bottom:0 }
+    .dropdown-item:hover { background:#333; }
+    .dropdown-item a { color:#fff; font-size:.92rem }
+
+    /* Container */
+    .container { flex:1; padding:2rem; max-width:1200px; width:100%; margin:0 auto; box-sizing:border-box; }
+
+    /* Header */
+    .profile-header { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:2rem; margin-bottom:2rem; display:flex; align-items:center; gap:1.5rem; }
+    .profile-avatar, .profile-logo {
+      width:90px; height:90px; border-radius:12px; background:#222; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:800; color:var(--brand);
+      object-fit:cover; overflow:hidden;
+    }
+    .profile-info h1 { margin:.1rem 0 .35rem 0; font-size:1.9rem; }
+    .profile-info .owner-line { margin:0; color:var(--muted); font-size:.98rem; }
+    .meta { color:var(--muted); font-size:.9rem; margin-top:.35rem; }
+
+    /* Tabs */
+    .tabs { display:flex; gap:1rem; margin-bottom:2rem; border-bottom:1px solid var(--line); padding-bottom:1rem; flex-wrap:wrap; }
+    .tab { padding:.75rem 1.1rem; background:#222; border:1px solid var(--line); border-radius:8px; cursor:pointer; transition:all .3s; font-weight:600; font-size:.95rem; }
+    .tab:hover { background:#333; border-color:#555; }
+    .tab.active { background:var(--brand); border-color:var(--brand); color:#fff; }
+
+    /* Sections */
+    .content-section { display:none; }
+    .content-section.active { display:block; }
+
+    /* Cards */
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:1rem; transition:all .25s; }
+    .card:hover { border-color:var(--brand); transform:translateY(-2px); box-shadow:0 4px 12px var(--elev); }
+
+    /* Appointment rows (as business) */
+    .appointment-card { display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+    .appointment-info { flex:1; }
+    .appointment-customer { font-weight:700; color:var(--brand); font-size:1.05rem; margin-bottom:.4rem; }
+    .appointment-service { color:#fff; margin-bottom:.25rem; }
+    .appointment-date { color:var(--muted); font-size:.9rem; }
+    .appointment-status { padding:.45rem .9rem; border-radius:999px; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
+    .status-upcoming { background:rgba(220,53,69,.18); color:var(--brand); border:1px solid var(--brand); }
+    .status-completed { background:rgba(40,167,69,.18); color:var(--success); border:1px solid var(--success); }
+    .status-cancelled { background:rgba(255,193,7,.18); color:var(--warn); border:1px solid var(--warn); }
+
+    /* Reviews */
+    .review-card { display:flex; gap:1rem; align-items:flex-start; }
+    .reviewer-avatar { width:48px; height:48px; border-radius:50%; background:#222; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; }
+    .review-body { flex:1; }
+    .stars { font-size:1rem; letter-spacing:1px; margin-bottom:.25rem; color:#ffd166; }
+    .reviewer-name { font-weight:700; margin-right:.5rem; }
+    .review-date { color:var(--muted); font-size:.85rem; }
+    .review-text { margin:.35rem 0 0 0; color:#ddd; line-height:1.5; }
+
+    /* Empty */
+    .empty-state { text-align:center; padding:3rem 2rem; color:var(--muted); }
+    .empty-state h3 { margin-bottom:1rem; color:#ccc; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { padding:1rem; }
+      .profile-header { flex-direction:column; text-align:center; gap:1rem; }
+      .appointment-card { flex-direction:column; align-items:flex-start; }
+      .review-card { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">Tanu</div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div class="hamburger-icon"></div>
+      <div class="hamburger-icon"></div>
+      <div class="hamburger-icon"></div>
+    </div>
+    <div class="dropdown-menu" id="dropdownMenu">
+    <div class="dropdown-item"><a href="{{ url_for('user_profile_bp.user_profile') }}">Profile</a></div>
+    <div class="dropdown-item"><a href="{{ url_for('user_settings_bp.user_settings') }}">Settings</a></div>
+      <div class="dropdown-item"><a href="{{ url_for('business_dash_bp.business_profile') }}">Business Dashboard</a></div>
+      
+      
+      <div class="dropdown-item"><a href="{{ url_for('auth_bp.logout') }}">Logout</a></div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% if business is none %}
+     <div style="text-align:center; margin: 1.5rem 0;">
+          <a href="/user_settings/create-business-account" style="background:#2d2d44; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.07);">Create Business Account</a>
+        </div>
+    {% else %}
+    <!-- Header: Business name big, owner smaller -->
+    <div class="profile-header">
+      {% if business.logo_url %}
+        <img src="{{ business.logo_url }}" alt="{{ business.name }} logo" class="profile-logo" />
+      {% else %}
+        <div class="profile-avatar">{{ (business['business_name'] or 'B')[:2] | upper }}</div>
+      {% endif %}
+      <div class="profile-info">
+        <h1>{{ business['business_name'] }}</h1>
+        <p class="owner-line">Owned by {{business.owner_id}}</p>
+        <div class="meta">
+          {{ business.category or 'Service Business' }} · {{ business.city }}, {{ business.state }}
+          {% if business.avg_rating %} · ★ {{ '%.1f' % business.avg_rating }} ({{ business.review_count }} reviews){% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs: Upcoming, Past, Reviews (favorites -> reviews) -->
+    <div class="tabs">
+      <div class="tab active" data-tab="upcoming">Upcoming Appointments</div>
+      <div class="tab" data-tab="past">Past Appointments</div>
+      <div class="tab" data-tab="reviews">Reviews</div>
+    </div>
+
+    <!-- Upcoming as business (with customer names) -->
+    <div class="content-section active" id="upcoming">
+      {% for appt in upcoming_appointments %}
+      <div class="card">
+        <div class="appointment-card">
+          <div class="appointment-info">
+            <div class="appointment-customer">{{ appt.customer_name }}</div>
+            <div class="appointment-service">{{ appt.service_name }}</div>
+            <div class="appointment-date">{{ appt.start_at_fmt }}</div>
+          </div>
+          <div class="appointment-status status-upcoming">Upcoming</div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="empty-state" id="upcoming-empty" {% if upcoming_appointments|length %}style="display:none;"{% endif %}>
+        <h3>No Upcoming Appointments</h3>
+        <p>Your future bookings will appear here.</p>
+      </div>
+    </div>
+
+    <!-- Past -->
+    <div class="content-section" id="past">
+      {% for appt in past_appointments %}
+      <div class="card">
+        <div class="appointment-card">
+          <div class="appointment-info">
+            <div class="appointment-customer">{{ appt.customer_name }}</div>
+            <div class="appointment-service">{{ appt.service_name }}</div>
+            <div class="appointment-date">{{ appt.start_at_fmt }}</div>
+          </div>
+          {% if appt.status == 'completed' %}
+          <div class="appointment-status status-completed">Completed</div>
+          {% elif appt.status == 'cancelled' %}
+          <div class="appointment-status status-cancelled">Cancelled</div>
+          {% else %}
+          <div class="appointment-status status-upcoming">{{ appt.status|title }}</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      <div class="empty-state" id="past-empty" {% if past_appointments|length %}style="display:none;"{% endif %}>
+        <h3>No Past Appointments</h3>
+        <p>Completed and cancelled bookings will show up here.</p>
+      </div>
+    </div>
+
+    <!-- Reviews (replaces Favorites) -->
+    <div class="content-section" id="reviews">
+      {% for r in reviews %}
+      <div class="card">
+        <div class="review-card">
+          <div class="reviewer-avatar">{{ (r.reviewer_initials or 'U')[:2] }}</div>
+          <div class="review-body">
+            <div class="stars" aria-label="{{ r.rating }} out of 5 stars">
+              {% set full = r.rating|int %}
+              {% set half = 1 if (r.rating - full) >= 0.5 else 0 %}
+              {% set empty = 5 - full - half %}
+              {% for _ in range(full) %}★{% endfor %}{% if half %}☆{% endif %}{% for _ in range(empty) %}☆{% endfor %}
+            </div>
+            <div>
+              <span class="reviewer-name">{{ r.reviewer_name }}</span>
+              <span class="review-date">· {{ r.created_at_fmt }}</span>
+            </div>
+            <p class="review-text">{{ r.comment }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="empty-state" id="reviews-empty" {% if reviews|length %}style="display:none;"{% endif %}>
+        <h3>No Reviews Yet</h3>
+        <p>When customers leave feedback, you’ll see it here.</p>
+      </div>
+    </div>
+    {%endif%}
+  </div>
+
+  <script>
+    // Tabs
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.content-section');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      t.classList.add('active');
+      const target = t.getAttribute('data-tab');
+      document.getElementById(target).classList.add('active');
+    }));
+
+    // Menu
+    function toggleMenu(){ document.getElementById('dropdownMenu').classList.toggle('show'); }
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('dropdownMenu');
+      const hamburger = document.querySelector('.hamburger');
+      if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove('show');
+    });
+
+    // If server renders zero items, empty states are already visible 
+    //  useful only if inject cards dynamically on the client
+    function checkEmptyStates(){
+      const up = document.querySelectorAll('#upcoming .card').length;
+      const past = document.querySelectorAll('#past .card').length;
+      const rev = document.querySelectorAll('#reviews .card').length;
+      if (!up) document.getElementById('upcoming-empty').style.display = 'block';
+      if (!past) document.getElementById('past-empty').style.display = 'block';
+      if (!rev) document.getElementById('reviews-empty').style.display = 'block';
+    }
+    document.addEventListener('DOMContentLoaded', checkEmptyStates);
+  </script>
+</body>
+</html>

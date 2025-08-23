@@ -21,6 +21,15 @@ def admin_portal():
         data = []
     return render_template("admin_portal.html", requests=data)
 
+
+
+
+# eventually adding a cancelled request by user route
+def cancelled():
+    pass
+
+
+
 # Function Description: Handles accepts a business pending on the admin page
 @tanuAdmin_bp.route("/admin/approve_business_request/<int:request_id>", methods=["POST"])
 @role_required('admin')
@@ -42,6 +51,14 @@ def approve_business_request(request_id):
         }).eq("id", request_id).execute()
 
 
+        # tie the business to the owner
+
+        supabase.table("Businesses").insert({
+            "owner_id": request_data['user_id'],
+            "business_name": request_data['business_name'],
+            "description": request_data['description']
+        }).execute()
+        
         
         return redirect(url_for('tanuAdmin_bp.admin_portal'))
         
