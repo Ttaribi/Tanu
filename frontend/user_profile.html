@@ -321,7 +321,12 @@
             <div class="dropdown-item">
                 <a href="{{ url_for('user_settings_bp.user_settings') }}">Settings</a>
             </div>
-            {% if user.google_email == "ttaribi@terpmail.umd.edu" %}
+            
+            <div class="dropdown-item">
+                <a href="{{ url_for('business_dash_bp.business_profile') }}">Business Profile</a>
+            </div>
+            
+            {% if user.role == "admin" %}
             <div class="dropdown-item">
                 <a href="{{ url_for('tanuAdmin_bp.admin_portal') }}">Admin Portal</a>
             </div>

@@ -252,7 +252,7 @@
             <div class="dropdown-item">
                 <a href="{{ url_for('user_settings_bp.user_settings') }}">Settings</a>
             </div>
-            {% if user.google_email == "ttaribi@terpmail.umd.edu" %}
+            {% if user.role == "admin" %}
             <div class="dropdown-item">
                 <a href="{{ url_for('tanuAdmin_bp.admin_portal') }}">Admin Portal</a>
             </div>
@@ -263,9 +263,7 @@
         </div>
     </div>
     <div class="container">
-        <div style="text-align:right; margin: 1.5rem 0;">
-          <a href="/user_settings/create-business-account" style="background:#2d2d44; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.07);">Create Business Account</a>
-        </div>
+       
         <div class="profile-card">
             <div class="section-title">Profile</div>
             <div class="info-group">
