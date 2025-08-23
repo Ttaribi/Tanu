@@ -41,7 +41,7 @@ def approve_business_request(request_id):
             "approved_at": "now()"
         }).eq("id", request_id).execute()
 
-        
+
         
         return redirect(url_for('tanuAdmin_bp.admin_portal'))
         
@@ -61,17 +61,14 @@ def reject_business_request(request_id):
         if not response.data:
             return jsonify({"error": "Business account request not found"}), 404
         
-        request_data = response.data
         
+        reason = "Nah"
+        supabase.table("BusinessAccountRequests").update({
+            "status": "-1",
+            "rejection_reason": reason,
+            "rejected_at": "now()"
+        }).eq("id", request_id).execute()
         
-        supabase.table("RejectedBusinessAccounts").insert({
-            "user_id": request_data["user_id"],
-            "business_name": request_data["business_name"],
-            "business_type": request_data["business_type"],
-            "description": request_data["description"]
-        }).execute()
-
-        supabase.table("BusinessAccountRequests").delete().eq("id", request_id).execute()
         
         return redirect(url_for('tanuAdmin_bp.admin_portal'))
     except Exception as e:
