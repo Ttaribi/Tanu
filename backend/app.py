@@ -7,17 +7,21 @@ from user_settings import user_settings_bp
 from tanuAdmin import tanuAdmin_bp
 from user_profile import user_profile_bp
 from s3_storage import s3_storage_bp
+from business.dashboard import business_dash_bp
 
 app = Flask(__name__, template_folder='../frontend')
 app.secret_key = '…your secret…'
 CORS(app, supports_credentials=True)
 
+
+# planning on registering blueprints in a separate file
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(user_settings_bp)  
 app.register_blueprint(tanuAdmin_bp)
 app.register_blueprint(user_profile_bp)
 app.register_blueprint(s3_storage_bp)
+app.register_blueprint(business_dash_bp)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
