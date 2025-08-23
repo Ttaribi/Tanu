@@ -3,27 +3,18 @@ from backend.clients import supabase
 from postgrest.exceptions import APIError
 from functools import wraps
 from . import tanuAdmin_bp
+from backend.auth.auth_checks import role_required
 import json
 
-# Function Description: Checks if user is an admin
-
-def admin_account_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        ui = session["supabase_user"]
-        if ui["google_email"] != "ttaribi@terpmail.umd.edu":
-            return redirect(url_for("auth_bp.login"))
-        return f(*args, **kwargs)
-    return decorated
 
 # Function Description: Retrieves current business forms from db and sends to front end
 
 @tanuAdmin_bp.route("/admin")
-@admin_account_required
+@role_required('admin')
 def admin_portal():
     try:
   
-        response = supabase.table("BusinessAccountRequests").select("*").execute()
+        response = supabase.table("BusinessAccountRequests").select("*").eq("status", "0").execute()
         data = response.data if response.data else []
       
     except Exception as e:
@@ -32,7 +23,7 @@ def admin_portal():
 
 # Function Description: Handles accepts a business pending on the admin page
 @tanuAdmin_bp.route("/admin/approve_business_request/<int:request_id>", methods=["POST"])
-@admin_account_required
+@role_required('admin')
 def approve_business_request(request_id):
 
     try:
@@ -46,18 +37,21 @@ def approve_business_request(request_id):
         
         
         update_response = supabase.table("BusinessAccountRequests").update({
-            "status": "approved",
+            "status": "1",
             "approved_at": "now()"
         }).eq("id", request_id).execute()
+
         
-        return jsonify({"message": "Business account request approved successfully"}), 200
+        
+        return redirect(url_for('tanuAdmin_bp.admin_portal'))
+        
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # Function Description: Handles rejecting a business pending on the admin page
 @tanuAdmin_bp.route("/admin/reject_business_request/<int:request_id>", methods=["POST"])
-@admin_account_required
+@role_required('admin')
 def reject_business_request(request_id):
 
     try:
@@ -83,3 +77,19 @@ def reject_business_request(request_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# refresh user profile for testing reasons
+@tanuAdmin_bp.route("/refresh")
+@role_required('student')
+def refresh():
+    profile = (
+        supabase
+        .table('UserAccounts')
+        .select("*")
+        .eq("auth_id", session['supabase_user']['auth_id'])
+        .single()
+        .execute()
+        .data
+    )
+    session['supabase_user'] = profile
+    return "refreshed"

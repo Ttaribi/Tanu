@@ -14,3 +14,18 @@ def login_required(f):
             return render_template("login.html")
         return f(*args, **kwargs)
     return decorated
+
+
+# Function Description: Checks user's role to allow/deny access
+def role_required(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            ui = session["supabase_user"]
+            if ui['role'] not in roles:
+                return ({"Access Denied": "Forbidden role"})
+            return f(*args, **kwargs)
+        return decorated
+    return wrapper
+
+

@@ -185,10 +185,11 @@ def skip_profile():
 
 @auth_bp.route('/logout')
 def logout():
+    session.clear()
     try:
         supabase.auth.sign_out()
     except Exception:
         pass
     
-    session.clear()
+    
     return redirect(url_for("dashboard_bp.dashboard"))
